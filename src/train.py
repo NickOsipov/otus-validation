@@ -2,6 +2,7 @@
 Скрипт для обучения базовой модели и регистрации в MLflow
 """
 
+import os
 import argparse
 
 from dotenv import load_dotenv
@@ -16,6 +17,8 @@ from common import (
 )
 
 load_dotenv()  # Загрузка переменных окружения из .env файла
+
+MLFLOW_TRACKING_URI = os.getenv("MLFLOW_TRACKING_URI", "http://localhost:5000")
 
 
 def train_base_model(
@@ -53,7 +56,7 @@ def train_base_model(
     print("=" * 60)
 
     # Настройка MLflow
-    setup_mlflow()
+    setup_mlflow(tracking_uri=MLFLOW_TRACKING_URI)
 
     # Загрузка и подготовка данных
     X_train, X_test, y_train, y_test = load_and_prepare_data(sample_frac=sample_frac)
@@ -107,8 +110,8 @@ def train_base_model(
 def main():
     """Главная функция для запуска из командной строки"""
     parser = argparse.ArgumentParser(description="Обучение базовой модели")
-    parser.add_argument("--model-name",default="url_classifier",help="Имя модели в MLflow",)
-    parser.add_argument("--n-estimators",type=int,default=35,help="Количество деревьев в RandomForest",)
+    parser.add_argument("--model-name", default="url_classifier",help="Имя модели в MLflow",)
+    parser.add_argument("--n-estimators", type=int, default=35,help="Количество деревьев в RandomForest",)
     parser.add_argument("--max-depth", type=int, default=9, help="Максимальная глубина деревьев")
     parser.add_argument("--sample-frac", type=float, default=0.1, help="Доля данных для использования")
     parser.add_argument("--no-prod", action="store_true", help="Не регистрировать как Production модель")

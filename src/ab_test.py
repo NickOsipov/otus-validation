@@ -2,6 +2,7 @@
 Скрипт для A/B тестирования моделей с оптимизацией гиперпараметров
 """
 
+import os
 import argparse
 import numpy as np
 from sklearn.model_selection import RandomizedSearchCV
@@ -20,6 +21,8 @@ from common import (
 )
 
 load_dotenv()  # Загрузка переменных окружения из .env файла
+
+MLFLOW_TRACKING_URI = os.getenv("MLFLOW_TRACKING_URI", "http://localhost:5000")
 
 
 def optimize_hyperparameters(
@@ -238,7 +241,7 @@ def run_ab_test(
     print("=" * 60)
 
     # Настройка MLflow
-    setup_mlflow()
+    setup_mlflow(tracking_uri=MLFLOW_TRACKING_URI)
 
     # Загрузка данных
     X_train, X_test, y_train, y_test = load_and_prepare_data(sample_frac=sample_frac)
@@ -318,7 +321,7 @@ def main():
     parser.add_argument("--sample-frac", type=float, default=0.1, help="Доля данных для использования")
     parser.add_argument("--bootstrap-iterations", type=int, default=100, help="Количество итераций bootstrap",)
     parser.add_argument("--alpha", type=float, default=0.01, help="Уровень значимости для статистических тестов",)
-    parser.add_argument("--auto-deploy", action="store_true",help="Автоматически разворачивать лучшую модель",)
+    parser.add_argument("--auto-deploy", action="store_true", help="Автоматически разворачивать лучшую модель",)
 
     args = parser.parse_args()
 

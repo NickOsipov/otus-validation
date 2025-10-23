@@ -177,7 +177,7 @@ def bootstrap_metrics(y_test, y_pred, n_iterations=100, random_state=42):
     return pd.DataFrame(scores)
 
 
-def statistical_comparison(scores_base, scores_candidate, alpha=0.01):
+def statistical_comparison(scores_base, scores_candidate, alpha=0.01, metrics=['F1', 'P']):
     """
     Статистическое сравнение двух моделей с помощью t-теста
     
@@ -189,6 +189,8 @@ def statistical_comparison(scores_base, scores_candidate, alpha=0.01):
         Метрики модели-кандидата
     alpha : float, default=0.01
         Уровень значимости
+    metrics : list, default=['F1', 'P']
+        Список метрик для сравнения
         
     Returns
     -------
@@ -196,8 +198,8 @@ def statistical_comparison(scores_base, scores_candidate, alpha=0.01):
         Словарь с результатами статистического сравнения
     """
     results = {}
-    
-    for metric in ['F1', 'P']:
+
+    for metric in metrics:
         t_stat, pvalue = ttest_ind(scores_base[metric], scores_candidate[metric])
         
         # Размер эффекта (Cohen's d)
